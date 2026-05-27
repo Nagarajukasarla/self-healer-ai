@@ -1,0 +1,25 @@
+# pnpm Specific
+node_modules/
+.ignored_node_modules
+.pnpm-debug.log*
+
+# Playwright Test Outputs
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+allure-results/
+
+# Authentication / Session Data
+playwright/.auth/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# OS & IDE Files
+.DS_Store
+.vscode/
+.idea/
+*.swp
