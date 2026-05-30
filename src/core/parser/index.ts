@@ -1,84 +1,84 @@
 import * as cheerio from "cheerio";
+
 import { logger } from "../../utils/logger.js";
 
-export interface CandidateElement {
-  candidateId: string;
-  tagName: string;
-  text: string;
-  attributes: Record<string, string>;
-  htmlSnippet: string;
-}
+import type { CandidateElement } from "../../types/index.js";
 
-/**
- * Parses raw HTML context using Cheerio and extracts candidate interactive elements.
- * 
- * @param html The raw HTML string of the page context.
- * @returns Array of candidate target elements.
- */
+import { generateSelectors } from "../selector/index.js";
+
 export function parseCandidates(html: string): CandidateElement[] {
-  logger.info("Parsing HTML context to extract candidate elements...");
-  
-  if (!html || html.trim() === "") {
-    logger.warn("Received empty HTML content for parsing.");
-    return [];
-  }
 
-  const $ = cheerio.load(html);
-  const candidates: CandidateElement[] = [];
-  const seenHtml = new Set<string>();
+    logger.info("Parsing HTML candidates");
 
-  // Broad selector list targeting buttons, inputs, links, labels, and attribute-rich wrappers
-  const selectors = [
-    "button",
-    "a",
-    "input",
-    "select",
-    "textarea",
-    "label",
-    "[id]",
-    "[data-testid]",
-    "[data-cy]",
-    "[role]",
-    "[name]",
-    "[class]"
-  ];
-
-  $(selectors.join(", ")).each((index, rawEl) => {
-    const el = rawEl as any;
-    // Avoid processing standard high-level wrappers like body/html if matched
-    if (el.tagName === "html" || el.tagName === "body" || el.tagName === "head") {
-      return;
+    if (!html?.trim()) {
+        return [];
     }
 
-    const $el = $(el);
-    
-    // Get outer HTML snippet of the element itself (without children's deep bodies if possible,
-    // but a standard outer HTML is best)
-    const rawHtml = $.html(el);
-    
-    // De-duplicate overlapping matches
-    if (seenHtml.has(rawHtml)) return;
-    seenHtml.add(rawHtml);
+    const $ = cheerio.load(html);
 
-    // Extract attributes
-    const attributes: Record<string, string> = {};
-    const attribs = el.attribs || {};
-    for (const [key, value] of Object.entries(attribs)) {
-      attributes[key] = value as string;
-    }
+    const candidates: CandidateElement[] = [];
 
-    // Extract inner text and clean whitespace
-    const text = $el.text().replace(/\s+/g, " ").trim();
+    const seen = new Set<string>();
 
-    candidates.push({
-      candidateId: `cand_${index + 1}`,
-      tagName: el.tagName.toUpperCase(),
-      text: text.substring(0, 150), // Cap long texts
-      attributes,
-      htmlSnippet: rawHtml,
+    const selectors = [
+        "button",
+        "a",
+        "input",
+        "select",
+        "textarea",
+        "[data-testid]",
+        "[data-cy]",
+        "[role]",
+        "[name]",
+        "[id]"
+    ];
+
+    $(selectors.join(",")).each((index, rawEl) => {
+        const el = rawEl as any;
+
+        const rawHtml = $.html(el);
+
+        if (seen.has(rawHtml)) {
+            return;
+        }
+
+        seen.add(rawHtml);
+
+        const $el = $(el);
+
+        const attributes: Record<string, string> = {};
+
+        Object.entries(el.attribs || {}).forEach(([key, value]) => {
+            attributes[key] = value as string;
+        });
+
+        const candidate: CandidateElement = {
+
+            candidateId: `cand_${index + 1}`,
+
+            tagName: el.tagName.toUpperCase(),
+
+            text: $el.text()
+                .replace(/\s+/g, " ")
+                .trim()
+                .substring(0, 150),
+
+            attributes,
+
+            htmlSnippet: rawHtml,
+
+            selectorHints: []
+        };
+
+        candidate.selectorHints =
+            generateSelectors(candidate);
+
+        candidates.push(candidate);
     });
-  });
 
-  logger.info(`Extracted ${candidates.length} candidate elements from HTML.`);
-  return candidates;
+    logger.info(
+        `Parsed ${candidates.length} candidates`
+    );
+
+    return candidates;
 }

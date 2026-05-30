@@ -1,34 +1,37 @@
 {
-  "name": "self-healer-ai",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^11.3.0",
-      "onFail": "download"
+    "name": "self-healer-ai",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "start": "tsx src/server.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devEngines": {
+        "packageManager": {
+            "name": "pnpm",
+            "version": "^11.3.0",
+            "onFail": "download"
+        }
+    },
+    "type": "module",
+    "dependencies": {
+        "@google/adk": "^1.1.0",
+        "cheerio": "^1.2.0",
+        "dotenv": "^17.4.2",
+        "fastify": "^5.8.5",
+        "fuse.js": "^7.3.0",
+        "groq-sdk": "^1.2.0",
+        "openai": "^6.39.0",
+        "pino": "^10.3.1",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@types/node": "^20.12.12",
+        "tsx": "^4.22.3",
+        "typescript": "^5.4.5"
     }
-  },
-  "type": "module",
-  "dependencies": {
-    "cheerio": "^1.2.0",
-    "dotenv": "^17.4.2",
-    "fastify": "^5.8.5",
-    "fuse.js": "^7.3.0",
-    "pino": "^10.3.1",
-    "string-similarity": "^4.0.4",
-    "zod": "^4.4.3"
-  },
-  "devDependencies": {
-    "tsx": "^4.22.3",
-    "typescript": "^5.4.5",
-    "@types/node": "^20.12.12"
-  }
 }
