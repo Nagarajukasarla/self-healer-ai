@@ -70,15 +70,11 @@ export function parseCandidates(html: string): CandidateElement[] {
             selectorHints: []
         };
 
-        candidate.selectorHints =
-            generateSelectors(candidate);
-
+        candidate.selectorHints = generateSelectors(candidate);
         candidates.push(candidate);
     });
 
-    logger.info(
-        `Parsed ${candidates.length} candidates`
-    );
+    logger.info(`Parsed ${candidates.length} candidates`);
 
     return candidates;
 }

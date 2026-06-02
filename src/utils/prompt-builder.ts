@@ -19,12 +19,14 @@ Rules:
 - Then role
 - Avoid dynamic classes
 - Avoid nth-child selectors
+- Determine and return the locator type ("css" or "xpath") as "type"
 
 Return ONLY valid JSON.
 
 Example:
 {
   "newLocator": "#signin-btn",
+  "type": "css",
   "confidence": 0.95,
   "strategy": "Matched by similar button text and DOM hierarchy"
 }

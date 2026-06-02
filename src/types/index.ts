@@ -68,12 +68,14 @@ export interface AgentRequest {
 
 export interface AgentResponse {
     newLocator?: string | undefined;
+    type?: string | undefined;
     confidence?: number | undefined;
     strategy?: string | undefined;
 }
 
 export interface HealingResponse {
     newLocator?: string | undefined;
+    type?: string | undefined;
     confidence?: number | undefined;
     strategy?: string | undefined;
 }

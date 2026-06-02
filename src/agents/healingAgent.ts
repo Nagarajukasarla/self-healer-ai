@@ -21,9 +21,10 @@ export const healingAgent = new Agent({
     - Page structure
 
     You return:
-    - Best alternative locator
-    - Confidence score
-    - Healing strategy
+    - Best alternative locator (newLocator)
+    - Locator type ("css" or "xpath") (type)
+    - Confidence score (confidence)
+    - Healing strategy (strategy)
 
     Always return JSON only.
     `

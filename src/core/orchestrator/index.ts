@@ -2,6 +2,7 @@ import { type HealingRequest, type HealingResponse, type AgentRequest } from "..
 import { parseCandidates } from "../parser/index.js";
 import { scoreCandidates } from "../scorer/index.js";
 import { HealerService } from "../../services/healer.service.js";
+import { logger } from "../../utils/logger.js";
 
 function inferTagName(selector: string, type?: string): string | undefined {
     if (!selector) return undefined;
@@ -27,6 +28,15 @@ function inferTagName(selector: string, type?: string): string | undefined {
     return undefined;
 }
 
+function inferSelectorType(selector: string): string {
+    if (!selector) return "css";
+    const clean = selector.trim();
+    if (clean.startsWith("//") || clean.startsWith("xpath=") || clean.startsWith("(/") || clean.startsWith("(//")) {
+        return "xpath";
+    }
+    return "css";
+}
+
 export class Orchestrator {
 
     private healerService: HealerService;
@@ -38,16 +48,14 @@ export class Orchestrator {
     async heal(request: HealingRequest): Promise<HealingResponse> {
 
         const candidates = parseCandidates(request.pageSource);
-        console.log(
-            JSON.stringify(candidates, null, 2)
-        );
+        
+        // logger.info(JSON.stringify(candidates, null, 2));
 
         if (candidates.length === 0) {
             return {
                 strategy: "No candidates found"
             };
         }
-
         const keys = Object.keys(request.locatorMetaData || {});
         const key = keys[0] || "unknown";
         const metadata = request.locatorMetaData[key] || {};
@@ -76,9 +84,7 @@ export class Orchestrator {
             topCandidates
         };
 
-        console.log(
-            JSON.stringify(agentRequest, null, 2)
-        );
+        console.log(JSON.stringify(agentRequest, null, 2));
 
         const result = await this.healerService.healLocator(agentRequest);
 
@@ -88,10 +94,13 @@ export class Orchestrator {
             };
         }
 
+        const type = result.type || inferSelectorType(result.newLocator);
+
         return {
+            type,
             newLocator: result.newLocator,
             confidence: result.confidence || 0,
             strategy: result.strategy || ""
         };
     }
-}
+}

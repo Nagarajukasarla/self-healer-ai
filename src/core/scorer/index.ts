@@ -147,10 +147,7 @@ export function scoreCandidates(
         .filter(c => c.score > 0.05)
         .sort((a, b) => b.score - a.score);
 
-    logger.info(
-        `Scoring completed. Top score: ${scored[0]?.score || 0
-        }`
-    );
+    logger.info(`Scoring completed. Top score: ${scored[0]?.score || 0}`);
 
     return scored;
 }
