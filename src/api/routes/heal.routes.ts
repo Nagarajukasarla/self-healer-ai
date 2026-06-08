@@ -69,6 +69,5 @@ export const healRoutes: FastifyPluginAsync = async (fastify: FastifyInstance) =
                 error: err.message
             });
         }
-    }
-    );
+    });
 };

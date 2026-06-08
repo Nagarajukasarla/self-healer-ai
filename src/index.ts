@@ -1,9 +1,11 @@
 import Fastify from "fastify";
 
 import { healRoutes } from "./api/routes/heal.routes.js";
+import { healthRoutes } from "./api/routes/health.routes.js";
 
 const app = Fastify({ logger: true });
 
+app.register(healthRoutes);
 app.register(healRoutes);
 
 const start = async () => {
